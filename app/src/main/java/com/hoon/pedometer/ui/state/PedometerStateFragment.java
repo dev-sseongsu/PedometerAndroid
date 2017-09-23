@@ -17,11 +17,12 @@ import com.hoon.pedometer.Injection;
 import com.hoon.pedometer.R;
 import com.hoon.pedometer.data.DailyStep;
 import com.hoon.pedometer.pedometer.PedometerManager;
+import com.hoon.pedometer.ui.BaseFragment;
 import com.hoon.pedometer.util.UiUtils;
 
 import java.util.ArrayList;
 
-public class PedometerStateFragment extends Fragment
+public class PedometerStateFragment extends BaseFragment
         implements PedometerStateContract.View, View.OnClickListener {
 
     private PedometerStateContract.Presenter mPresenter;

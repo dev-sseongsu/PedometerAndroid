@@ -12,12 +12,13 @@ import android.view.ViewGroup;
 
 import com.hoon.pedometer.Injection;
 import com.hoon.pedometer.R;
+import com.hoon.pedometer.ui.BaseFragment;
 import com.hoon.pedometer.ui.logs.adapter.PedometerLogsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PedometerLogsFragment extends Fragment implements PedometerLogsContract.View {
+public class PedometerLogsFragment extends BaseFragment implements PedometerLogsContract.View {
 
     private PedometerLogsContract.Presenter mPresenter;
 
