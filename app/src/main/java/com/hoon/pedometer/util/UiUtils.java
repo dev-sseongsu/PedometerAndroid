@@ -18,7 +18,7 @@ import java.util.Locale;
 public class UiUtils {
 
     private static final DateFormat DF_DATE =
-            new SimpleDateFormat("yyyy-MM-dd (E)", Locale.getDefault());
+            new SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault());
 
     public static String formatDate(@NonNull Date date) {
         return DF_DATE.format(date);

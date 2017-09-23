@@ -6,11 +6,19 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/textColor</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+
+    99
+    down vote
+    <style name="TabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/textSizeSmall</item>
     </style>
 
 </resources>

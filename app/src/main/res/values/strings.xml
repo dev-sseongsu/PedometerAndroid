@@ -1,15 +1,14 @@
 <resources>
-    <string name="app_name">PedometerAndroid</string>
+    <string name="app_name">Pedometer</string>
     <string name="pedometer_screen">만보기 화면</string>
     <string name="pedometer_logs">만보기 기록</string>
     <string name="steps_fmt">%1$,d 걸음</string>
     <string name="km_fmt">%1$,.1f km</string>
-    <string name="start">시작</string>
-    <string name="stop">종료</string>
+    <string name="start">start</string>
+    <string name="stop">stop</string>
+    <string name="current_location_label">현재 위치:</string>
     <string name="current_location_error_msg">현재 위치를 가져올 수 없습니다.</string>
     <string name="pedometer_not_available_msg">현재 기기는 만보기 기능이 지원되지 않습니다.</string>
-    <string name="pedometer_start_msg">만보기 <b>시작</b></string>
-    <string name="pedometer_stop_msg">만보기 <b>종료</b></string>
 
     <string name="permission_blocked_message">권한이 허용되지 않아 해당 기능을 사용할 수 없습니다. 설정 화면에서 권한을 허용해주세요.</string>
     <string name="settings">설정</string>
