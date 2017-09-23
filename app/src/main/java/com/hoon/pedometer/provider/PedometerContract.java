@@ -24,6 +24,9 @@ public final class PedometerContract {
          */
         String DATE = "card_id";
         String STEP_COUNT = "step_count";
+        /**
+         * Distance in meter
+         */
         String DISTANCE = "distance";
     }
 

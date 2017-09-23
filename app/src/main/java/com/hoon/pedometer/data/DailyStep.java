@@ -5,7 +5,7 @@ import java.util.Date;
 public class DailyStep {
     private Date date;
     private int stepCount;
-    private int distance;
+    private double distanceMeter;
 
     public DailyStep(Date date) {
         this.date = date;
@@ -27,11 +27,15 @@ public class DailyStep {
         this.stepCount = stepCount;
     }
 
-    public int getDistance() {
-        return distance;
+    public double getDistanceMeter() {
+        return distanceMeter;
     }
 
-    public void setDistance(int distance) {
-        this.distance = distance;
+    public void setDistanceMeter(double distanceMeter) {
+        this.distanceMeter = distanceMeter;
+    }
+
+    public double getDistanceKm() {
+        return distanceMeter / 1000;
     }
 }
