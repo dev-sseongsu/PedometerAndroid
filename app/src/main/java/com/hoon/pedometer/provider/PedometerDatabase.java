@@ -22,7 +22,7 @@ class PedometerDatabase extends SQLiteOpenHelper {
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + DailyStepsColumns.DATE + " TEXT NOT NULL,"
                 + DailyStepsColumns.STEP_COUNT + " INTEGER DEFAULT 0,"
-                + DailyStepsColumns.DISTANCE + " INTEGER DEFAULT 0,"
+                + DailyStepsColumns.DISTANCE + " REAL DEFAULT 0,"
                 + "UNIQUE (" + DailyStepsColumns.DATE + ") ON CONFLICT REPLACE)");
     }
 
