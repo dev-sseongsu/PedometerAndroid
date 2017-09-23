@@ -48,7 +48,13 @@ public class PedometerStatePresenter implements PedometerStateContract.Presenter
 
     @Override
     public void turnOnPedometer() {
-        mView.setPedometerOn(mPedometerManager.startPedometer());
+        if (mPedometerManager.isPedometerAvailable()) {
+            mPedometerManager.startPedometer();
+            mView.setPedometerOn(true);
+        } else {
+            mView.alertPedometerUnavailable();
+            turnOffPedometer();
+        }
     }
 
     @Override

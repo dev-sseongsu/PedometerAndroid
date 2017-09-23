@@ -14,6 +14,8 @@ public interface PedometerStateContract {
 
         void setPedometerOn(boolean on);
 
+        void alertPedometerUnavailable();
+
         boolean isActive();
     }
 

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,6 +82,11 @@ public class PedometerStateFragment extends BaseFragment
     public void setPedometerOn(boolean on) {
         mIsPedometerOn = on;
         mBtnStartStop.setText(mIsPedometerOn ? R.string.stop : R.string.start);
+    }
+
+    @Override
+    public void alertPedometerUnavailable() {
+        showToast(R.string.pedometer_not_available_msg);
     }
 
     @Override

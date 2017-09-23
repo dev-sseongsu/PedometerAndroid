@@ -61,13 +61,9 @@ public class PedometerManager {
         return mPreferences.getBoolean(PREF_IS_PEDOMETER_STARTED, false);
     }
 
-    public boolean startPedometer() {
-        if (isPedometerAvailable()) {
-            mPreferences.edit().putBoolean(PREF_IS_PEDOMETER_STARTED, true).apply();
-            mAppContext.startService(new Intent(mAppContext, PedometerService.class));
-            return true;
-        }
-        return false;
+    public void startPedometer() {
+        mPreferences.edit().putBoolean(PREF_IS_PEDOMETER_STARTED, true).apply();
+        mAppContext.startService(new Intent(mAppContext, PedometerService.class));
     }
 
     public void stopPedometer() {
