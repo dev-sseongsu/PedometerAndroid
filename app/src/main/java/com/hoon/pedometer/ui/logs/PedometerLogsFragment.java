@@ -34,7 +34,7 @@ public class PedometerLogsFragment extends Fragment implements PedometerLogsCont
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new PedometerLogsAdapter(
                 Injection.providePedometerDataSource(getContext()),

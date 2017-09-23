@@ -21,9 +21,9 @@ public class PedometerLogViewHolder extends RecyclerView.ViewHolder {
 
     private PedometerLogViewHolder(View itemView) {
         super(itemView);
-        mDate = itemView.findViewById(R.id.date);
-        mStepCount = itemView.findViewById(R.id.step_count);
-        mDistance = itemView.findViewById(R.id.distance);
+        mDate = (TextView) itemView.findViewById(R.id.date);
+        mStepCount = (TextView) itemView.findViewById(R.id.step_count);
+        mDistance = (TextView) itemView.findViewById(R.id.distance);
     }
 
     public static PedometerLogViewHolder newInstance(@NonNull ViewGroup parent) {

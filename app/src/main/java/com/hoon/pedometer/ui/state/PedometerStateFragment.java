@@ -39,11 +39,11 @@ public class PedometerStateFragment extends Fragment implements PedometerStateCo
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mDate = view.findViewById(R.id.date);
-        mStepCount = view.findViewById(R.id.step_count);
-        mDistance = view.findViewById(R.id.distance);
-        mLocation = view.findViewById(R.id.location);
-        mBtnStartStop = view.findViewById(R.id.start_stop_btn);
+        mDate = (TextView) view.findViewById(R.id.date);
+        mStepCount = (TextView) view.findViewById(R.id.step_count);
+        mDistance = (TextView) view.findViewById(R.id.distance);
+        mLocation = (TextView) view.findViewById(R.id.location);
+        mBtnStartStop = (Button) view.findViewById(R.id.start_stop_btn);
         mBtnStartStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
