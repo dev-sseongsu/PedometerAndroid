@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PedometerAndroid</string>
+    <string name="pedometer_screen">만보기 화면</string>
+    <string name="pedometer_logs">만보기 기록</string>
+    <string name="steps_fmt">%1$s 걸음</string>
+    <string name="km_fmt">%1$s km</string>
+    <string name="start">시작</string>
+    <string name="stop">종료</string>
+    <string name="current_location_error_msg">현재 위치를 가져올 수 없습니다.</string>
+</resources>
