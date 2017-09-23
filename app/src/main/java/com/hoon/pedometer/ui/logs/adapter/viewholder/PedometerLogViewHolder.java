@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.hoon.pedometer.R;
 import com.hoon.pedometer.data.DailyStep;
+import com.hoon.pedometer.util.UiUtils;
 
 public class PedometerLogViewHolder extends RecyclerView.ViewHolder {
 
@@ -33,6 +34,7 @@ public class PedometerLogViewHolder extends RecyclerView.ViewHolder {
     public void bind(@Nullable DailyStep dailyStep) {
         if (dailyStep != null) {
             Context context = mDate.getContext();
+            mDate.setText(UiUtils.formatDate(dailyStep.getDate()));
             mStepCount.setText(context.getString(R.string.steps_fmt, dailyStep.getStepCount()));
             mDistance.setText(context.getString(R.string.km_fmt, dailyStep.getDistanceKm()));
         } else {
