@@ -94,7 +94,7 @@ public class PedometerService extends Service implements SensorEventListener {
     @Nullable
     private SensorEventProcessor provideProcessor() {
         // TODO 버전 별 분기
-        return new StepCounterProcessor(PedometerService.this);
+        return new StepCounterProcessor();
     }
 
     /**

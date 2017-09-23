@@ -1,8 +1,6 @@
 package com.hoon.pedometer.pedometer.processor;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.os.Build;
@@ -16,13 +14,9 @@ import com.hoon.pedometer.pedometer.SensorEventWrapper;
  */
 public class StepCounterProcessor implements SensorEventProcessor {
 
-    private static final String PREF_NAME = "step_counter.pref";
-    private static final String PREF_LATEST_COUNTER_COUNT = "PREF_LATEST_COUNTER_COUNT";
-    @NonNull
-    private final SharedPreferences mPreferences;
+    private int mLastCounterCount;
 
-    public StepCounterProcessor(@NonNull Context context) {
-        mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    public StepCounterProcessor() {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -36,21 +30,12 @@ public class StepCounterProcessor implements SensorEventProcessor {
         int stepCount = 0;
         SensorEvent event = eventWrapper.event;
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            int latestCounterCount = getLatestCounterCount();
             int newCounterCount = Math.round(event.values[0]);
-            if (latestCounterCount > 0) {
-                stepCount = newCounterCount - latestCounterCount;
+            if (mLastCounterCount > 0) {
+                stepCount = newCounterCount - mLastCounterCount;
             }
-            setLatestCounterCount(newCounterCount);
+            mLastCounterCount = newCounterCount;
         }
         return stepCount;
-    }
-
-    private int getLatestCounterCount() {
-        return mPreferences.getInt(PREF_LATEST_COUNTER_COUNT, 0);
-    }
-
-    private void setLatestCounterCount(int count) {
-        mPreferences.edit().putInt(PREF_LATEST_COUNTER_COUNT, count).apply();
     }
 }
