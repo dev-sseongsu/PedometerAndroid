@@ -43,4 +43,7 @@ dependencies {
     compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
     compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+
+    // ted permission
+    compile 'gun0912.ted:tedpermission:2.0.0'
 }

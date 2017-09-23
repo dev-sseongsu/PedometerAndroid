@@ -1,11 +1,14 @@
 package com.hoon.pedometer.pedometer;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -13,14 +16,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 
 import com.hoon.pedometer.Injection;
-import com.hoon.pedometer.data.source.PedometerDataSource;
 import com.hoon.pedometer.api.MapApi;
 import com.hoon.pedometer.api.NaverRestApiHelper;
 import com.hoon.pedometer.api.response.ReverseGeocodeResponse;
-import com.hoon.pedometer.pedometer.processor.AccelerometerProcessor;
+import com.hoon.pedometer.data.source.PedometerDataSource;
 import com.hoon.pedometer.pedometer.processor.SensorEventProcessor;
 import com.hoon.pedometer.pedometer.processor.StepCounterProcessor;
 import com.nhn.android.maps.NMapLocationManager;
@@ -50,7 +52,7 @@ public class PedometerService extends Service implements SensorEventListener,
         super.onCreate();
 
         PedometerManager manager = new PedometerManager(this);
-        if (manager.isPedometerAvailable()) {
+        if (checkPermissions() && manager.isPedometerAvailable()) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mProcessor = provideProcessor();
             if (mProcessor != null) {
@@ -95,6 +97,17 @@ public class PedometerService extends Service implements SensorEventListener,
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private boolean checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Looper createBackgroundLooper(@NonNull String name) {

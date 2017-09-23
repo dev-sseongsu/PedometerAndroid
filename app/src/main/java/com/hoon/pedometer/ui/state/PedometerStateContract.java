@@ -23,7 +23,9 @@ public interface PedometerStateContract {
 
         void unbind();
 
-        void togglePedometerState();
+        void turnOnPedometer();
+
+        void turnOffPedometer();
 
         void refreshDailyStep();
     }

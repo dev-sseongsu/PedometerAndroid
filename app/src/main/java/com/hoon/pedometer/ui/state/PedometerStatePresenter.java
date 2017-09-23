@@ -28,10 +28,9 @@ public class PedometerStatePresenter implements PedometerStateContract.Presenter
     public void bind(@NonNull PedometerStateContract.View view) {
         mView = view;
         if (mPedometerManager.isPedometerStarted()) {
-            mView.setPedometerOn(mPedometerManager.startPedometer());
+            turnOnPedometer();
         } else {
-            mPedometerManager.stopPedometer();
-            mView.setPedometerOn(false);
+            turnOffPedometer();
         }
 
         mDataSource.registerOnDailyStepChangedListener(this);
@@ -48,13 +47,14 @@ public class PedometerStatePresenter implements PedometerStateContract.Presenter
     }
 
     @Override
-    public void togglePedometerState() {
-        if (mPedometerManager.isPedometerStarted()) {
-            mPedometerManager.stopPedometer();
-            mView.setPedometerOn(false);
-        } else {
-            mView.setPedometerOn(mPedometerManager.startPedometer());
-        }
+    public void turnOnPedometer() {
+        mView.setPedometerOn(mPedometerManager.startPedometer());
+    }
+
+    @Override
+    public void turnOffPedometer() {
+        mPedometerManager.stopPedometer();
+        mView.setPedometerOn(false);
     }
 
     @Override
