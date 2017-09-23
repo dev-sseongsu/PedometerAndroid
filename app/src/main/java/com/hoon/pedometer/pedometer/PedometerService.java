@@ -23,6 +23,7 @@ import com.hoon.pedometer.api.MapApi;
 import com.hoon.pedometer.api.NaverRestApiHelper;
 import com.hoon.pedometer.api.response.ReverseGeocodeResponse;
 import com.hoon.pedometer.data.source.PedometerDataSource;
+import com.hoon.pedometer.pedometer.processor.AccelerometerProcessor;
 import com.hoon.pedometer.pedometer.processor.SensorEventProcessor;
 import com.hoon.pedometer.pedometer.processor.StepCounterProcessor;
 import com.nhn.android.maps.NMapLocationManager;
@@ -38,7 +39,7 @@ public class PedometerService extends Service implements SensorEventListener,
         NMapLocationManager.OnLocationChangeListener {
 
     private SensorManager mSensorManager;
-    private SensorEventProcessor mProcessor;
+    private SensorEventProcessor mSensorEventProcessor;
     private PedometerDataSource mDataSource;
 
     private volatile SensorHandler mSensorHandler;
@@ -54,9 +55,10 @@ public class PedometerService extends Service implements SensorEventListener,
         PedometerManager manager = new PedometerManager(this);
         if (checkPermissions() && manager.isPedometerAvailable()) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-            mProcessor = provideProcessor();
-            if (mProcessor != null) {
-                Sensor sensor = mSensorManager.getDefaultSensor(mProcessor.getSensorType());
+            mSensorEventProcessor = provideSensorEventProcessor();
+            if (mSensorEventProcessor != null) {
+                Sensor sensor = mSensorManager.getDefaultSensor(
+                        mSensorEventProcessor.getSensorType());
                 if (sensor != null) {
 
                     mSensorHandler = new SensorHandler(createBackgroundLooper("pedometer"));
@@ -134,9 +136,13 @@ public class PedometerService extends Service implements SensorEventListener,
      * @return 프로세서
      */
     @Nullable
-    private SensorEventProcessor provideProcessor() {
-        // TODO 버전 별 분기
-        return new StepCounterProcessor();
+    private SensorEventProcessor provideSensorEventProcessor() {
+        if (PedometerManager.isStepCounterAvailable(this)) {
+            return new StepCounterProcessor();
+        } else if (PedometerManager.isAccelerometerAvailable(this)) {
+            return new AccelerometerProcessor();
+        }
+        return null;
     }
 
     @Override
@@ -169,11 +175,10 @@ public class PedometerService extends Service implements SensorEventListener,
         @Override
         public void handleMessage(Message msg) {
             SensorEventWrapper eventWrapper = (SensorEventWrapper) msg.obj;
-            int stepCount = mProcessor.calcStepCount(eventWrapper);
-            if (stepCount > 0)
-                if (stepCount > 0) {
-                    mDataSource.addStepCount(eventWrapper.onSensorChangedMillis, stepCount);
-                }
+            int stepCount = mSensorEventProcessor.calcStepCount(eventWrapper);
+            if (stepCount > 0) {
+                mDataSource.addStepCount(eventWrapper.onSensorChangedMillis, stepCount);
+            }
         }
     }
 

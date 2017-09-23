@@ -20,30 +20,41 @@ public class PedometerManager {
 
     private final Context mAppContext;
     private final SharedPreferences mPreferences;
-    private final boolean mIsStepCounterAvailable;
+    private final boolean mIsPedometerAvilable;
 
     public PedometerManager(@NonNull Context context) {
         mAppContext = context.getApplicationContext();
         mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        mIsStepCounterAvailable = isStepCounterAvailable(context);
+        mIsPedometerAvilable =
+                isStepCounterAvailable(context) || isAccelerometerAvailable(context);
     }
 
-    private static boolean isStepCounterAvailable(Context context) {
+    public static boolean isStepCounterAvailable(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             PackageManager pm = context.getPackageManager();
             SensorManager sm =
                     (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
             if (pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_COUNTER)
-                    && !sm.getSensorList(Sensor.TYPE_STEP_COUNTER).isEmpty()
-                    && !sm.getSensorList(Sensor.TYPE_STEP_DETECTOR).isEmpty()) {
+                    && !sm.getSensorList(Sensor.TYPE_STEP_COUNTER).isEmpty()) {
                 return true;
             }
         }
         return false;
     }
 
+    public static boolean isAccelerometerAvailable(@NonNull Context context) {
+        PackageManager pm = context.getPackageManager();
+        SensorManager sm =
+                (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        if (pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER)
+                && !sm.getSensorList(Sensor.TYPE_ACCELEROMETER).isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean isPedometerAvailable() {
-        return mIsStepCounterAvailable;
+        return mIsPedometerAvilable;
     }
 
     public boolean isPedometerStarted() {
