@@ -1,6 +1,7 @@
 package com.hoon.pedometer.ui.state;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.hoon.pedometer.data.DailyStep;
 import com.hoon.pedometer.data.source.PedometerDataSource;
@@ -9,7 +10,8 @@ import com.hoon.pedometer.pedometer.PedometerManager;
 import java.util.Date;
 
 public class PedometerStatePresenter implements PedometerStateContract.Presenter,
-        PedometerDataSource.OnDailyStepChangedListener {
+        PedometerDataSource.OnDailyStepChangeListener,
+        PedometerDataSource.OnLocationChangeListener {
     @NonNull
     private final PedometerManager mPedometerManager;
     @NonNull
@@ -34,12 +36,15 @@ public class PedometerStatePresenter implements PedometerStateContract.Presenter
 
         mDataSource.registerOnDailyStepChangedListener(this);
         refreshDailyStep();
+        mDataSource.registerOnLocationChangeListener(this);
+        mView.setCurrentLocation(mDataSource.getLocation());
     }
 
     @Override
     public void unbind() {
         mView = null;
         mDataSource.unregisterOnDailyStepChangedListener(this);
+        mDataSource.unregisterOnLocationChangeListener(this);
     }
 
     @Override
@@ -56,9 +61,7 @@ public class PedometerStatePresenter implements PedometerStateContract.Presenter
     public void refreshDailyStep() {
         DailyStep dailyStep = mDataSource.getDailyStepByDate(System.currentTimeMillis());
         if (dailyStep == null) dailyStep = new DailyStep(new Date());
-        if (isViewActive()) {
-            mView.setDailyStep(dailyStep);
-        }
+        mView.setDailyStep(dailyStep);
     }
 
     private boolean isViewActive() {
@@ -67,6 +70,15 @@ public class PedometerStatePresenter implements PedometerStateContract.Presenter
 
     @Override
     public void onDailyStepChanged() {
-        refreshDailyStep();
+        if (isViewActive()) {
+            refreshDailyStep();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(@Nullable String address) {
+        if (isViewActive()) {
+            mView.setCurrentLocation(address);
+        }
     }
 }

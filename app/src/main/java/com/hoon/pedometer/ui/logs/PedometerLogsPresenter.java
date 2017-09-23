@@ -1,7 +1,6 @@
 package com.hoon.pedometer.ui.logs;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.hoon.pedometer.data.source.PedometerDataSource;
 
@@ -9,7 +8,7 @@ import java.util.List;
 
 public class PedometerLogsPresenter implements PedometerLogsContract.Presenter,
         PedometerDataSource.LoadDailyStepIdsCallback,
-        PedometerDataSource.OnDailyStepChangedListener {
+        PedometerDataSource.OnDailyStepChangeListener {
 
     @NonNull
     private final PedometerDataSource mDataSource;

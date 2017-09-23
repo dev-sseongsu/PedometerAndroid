@@ -72,7 +72,8 @@ public class PedometerStateFragment extends Fragment implements PedometerStateCo
 
     @Override
     public void setCurrentLocation(@Nullable String location) {
-        mLocation.setText(location == null ? "" : location);
+        mLocation.setText(location != null ?
+                location : getString(R.string.current_location_error_msg));
     }
 
     @Override

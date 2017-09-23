@@ -11,7 +11,7 @@ public class Injection {
 
     @NonNull
     public static PedometerDataSource providePedometerDataSource(@NonNull Context context) {
-        return PedometerLocalDataSource.getInstance(context.getContentResolver());
+        return PedometerLocalDataSource.getInstance(context);
     }
 
 }

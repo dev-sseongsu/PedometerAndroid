@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.hoon.pedometer.data.DailyStep;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,11 +20,21 @@ public interface PedometerDataSource {
 
     void addStepCount(long dateMillis, int stepCount);
 
+    void addDistance(long dateMillis, double addition);
+
+    String getLocation();
+
+    void setLocation(@Nullable String currentAddress);
+
     void loadAllDailyStepIds(@NonNull LoadDailyStepIdsCallback callback);
 
-    void registerOnDailyStepChangedListener(@NonNull OnDailyStepChangedListener l);
+    void registerOnDailyStepChangedListener(@NonNull OnDailyStepChangeListener l);
 
-    void unregisterOnDailyStepChangedListener(@NonNull OnDailyStepChangedListener l);
+    void unregisterOnDailyStepChangedListener(@NonNull OnDailyStepChangeListener l);
+
+    void registerOnLocationChangeListener(@NonNull OnLocationChangeListener l);
+
+    void unregisterOnLocationChangeListener(@NonNull OnLocationChangeListener l);
 
     interface LoadDailyStepIdsCallback {
         void onLoadDailyStepIdsSuccess(@NonNull List<Long> ids);
@@ -33,8 +42,12 @@ public interface PedometerDataSource {
         void onDailyStepStepIdsFailure();
     }
 
-    interface OnDailyStepChangedListener {
+    interface OnDailyStepChangeListener {
         void onDailyStepChanged();
+    }
+
+    interface OnLocationChangeListener {
+        void onLocationChanged(@Nullable String address);
     }
 
 }

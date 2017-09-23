@@ -2,6 +2,8 @@ package com.hoon.pedometer.data.source;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -27,6 +29,9 @@ import java.util.Set;
  */
 public class PedometerLocalDataSource implements PedometerDataSource {
 
+    private static final String PREF_NAME = "pedometer.pref";
+    private static final String PREF_CURRENT_ADDRESS = "PREF_CURRENT_ADDRESS";
+
     @Nullable
     private volatile static PedometerLocalDataSource sInstance = null;
 
@@ -34,22 +39,27 @@ public class PedometerLocalDataSource implements PedometerDataSource {
     private final ContentResolver mContentResolver;
 
     @NonNull
+    private final SharedPreferences mPreferences;
+
+    @NonNull
     private final ContentObserver mContentObserver =
             new DailyStepsContentObserver(new Handler(Looper.getMainLooper()));
 
     @NonNull
-    private final Set<OnDailyStepChangedListener> mListeners = new HashSet<>();
+    private final Set<OnDailyStepChangeListener> mDailyStepChangeListeners = new HashSet<>();
+    @NonNull
+    private final Set<OnLocationChangeListener> mLocationListeners = new HashSet<>();
 
-    private PedometerLocalDataSource(@NonNull ContentResolver contentResolver) {
-        mContentResolver = contentResolver;
+    private PedometerLocalDataSource(@NonNull Context context) {
+        mContentResolver = context.getContentResolver();
+        mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    public static synchronized PedometerLocalDataSource getInstance(
-            @NonNull ContentResolver contentResolver) {
+    public static synchronized PedometerLocalDataSource getInstance(@NonNull Context context) {
         if (sInstance == null) {
             synchronized (PedometerLocalDataSource.class) {
                 if (sInstance == null) {
-                    sInstance = new PedometerLocalDataSource(contentResolver);
+                    sInstance = new PedometerLocalDataSource(context);
                 }
             }
         }
@@ -116,6 +126,52 @@ public class PedometerLocalDataSource implements PedometerDataSource {
     }
 
     @Override
+    public void addDistance(long dateMillis, double addition) {
+        String dateString = DailySteps.formatDate(dateMillis);
+        String[] selectionArgs = new String[]{String.valueOf(dateString)};
+        Cursor cursor = mContentResolver.query(DailySteps.CONTENT_URI,
+                Query.PROJECTION_DISTANCE,
+                Query.SELECTION_DATE, selectionArgs,
+                null);
+
+        if (cursor != null) {
+            ContentValues values = new ContentValues();
+            if (cursor.moveToFirst()) {
+                // update existing record
+                double newDistance = cursor.getDouble(0) + addition;
+                values.put(DailySteps.DISTANCE, newDistance);
+                mContentResolver.update(DailySteps.CONTENT_URI, values,
+                        Query.SELECTION_DATE, selectionArgs);
+            } else {
+                // no record exists -- insert
+                values.put(DailySteps.DATE, dateString);
+                values.put(DailySteps.DISTANCE, addition);
+                mContentResolver.insert(DailySteps.CONTENT_URI, values);
+            }
+            cursor.close();
+        }
+    }
+
+    @Nullable
+    @Override
+    public String getLocation() {
+        return mPreferences.getString(PREF_CURRENT_ADDRESS, null);
+    }
+
+    @Override
+    public void setLocation(@Nullable String currentAddress) {
+        String prevAddress = getLocation();
+        if ((currentAddress != prevAddress) &&
+                (currentAddress == null || !currentAddress.equals(prevAddress))) {
+            // address changed
+            mPreferences.edit().putString(PREF_CURRENT_ADDRESS, currentAddress).apply();
+            for (OnLocationChangeListener listener : mLocationListeners) {
+                listener.onLocationChanged(currentAddress);
+            }
+        }
+    }
+
+    @Override
     public void loadAllDailyStepIds(@NonNull LoadDailyStepIdsCallback callback) {
         Cursor cursor = mContentResolver.query(DailySteps.CONTENT_URI,
                 Query.PROJECTION_ID, null, null, Query.DEFAULT_ORDER);
@@ -136,20 +192,30 @@ public class PedometerLocalDataSource implements PedometerDataSource {
     }
 
     @Override
-    public void registerOnDailyStepChangedListener(@NonNull OnDailyStepChangedListener l) {
-        if (mListeners.isEmpty()) {
+    public void registerOnDailyStepChangedListener(@NonNull OnDailyStepChangeListener l) {
+        if (mDailyStepChangeListeners.isEmpty()) {
             mContentResolver.registerContentObserver(
                     DailySteps.CONTENT_URI, true, mContentObserver);
         }
-        mListeners.add(l);
+        mDailyStepChangeListeners.add(l);
     }
 
     @Override
-    public void unregisterOnDailyStepChangedListener(@NonNull OnDailyStepChangedListener l) {
-        mListeners.remove(l);
-        if (mListeners.isEmpty()) {
+    public void unregisterOnDailyStepChangedListener(@NonNull OnDailyStepChangeListener l) {
+        mDailyStepChangeListeners.remove(l);
+        if (mDailyStepChangeListeners.isEmpty()) {
             mContentResolver.unregisterContentObserver(mContentObserver);
         }
+    }
+
+    @Override
+    public void registerOnLocationChangeListener(@NonNull OnLocationChangeListener l) {
+        mLocationListeners.add(l);
+    }
+
+    @Override
+    public void unregisterOnLocationChangeListener(@NonNull OnLocationChangeListener l) {
+        mLocationListeners.remove(l);
     }
 
     @Nullable
@@ -159,7 +225,7 @@ public class PedometerLocalDataSource implements PedometerDataSource {
                     cursor.getString(cursor.getColumnIndex(DailySteps.DATE))));
             dailyStep.setStepCount(
                     cursor.getInt(cursor.getColumnIndex(DailySteps.STEP_COUNT)));
-            dailyStep.setDistance(
+            dailyStep.setDistanceMeter(
                     cursor.getInt(cursor.getColumnIndex(DailySteps.DISTANCE)));
 
             return dailyStep;
@@ -173,6 +239,7 @@ public class PedometerLocalDataSource implements PedometerDataSource {
     private interface Query {
         String[] PROJECTION_ID = new String[]{DailySteps._ID};
         String[] PROJECTION_STEP_COUNT = new String[]{DailySteps.STEP_COUNT};
+        String[] PROJECTION_DISTANCE = new String[]{DailySteps.DISTANCE};
         String SELECTION_ID = DailySteps._ID + "=?";
         String SELECTION_DATE = DailySteps.DATE + "=?";
         String DEFAULT_ORDER = DailySteps.DATE + " DESC";
@@ -186,7 +253,7 @@ public class PedometerLocalDataSource implements PedometerDataSource {
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            for (OnDailyStepChangedListener listener : mListeners) {
+            for (OnDailyStepChangeListener listener : mDailyStepChangeListeners) {
                 listener.onDailyStepChanged();
             }
         }
