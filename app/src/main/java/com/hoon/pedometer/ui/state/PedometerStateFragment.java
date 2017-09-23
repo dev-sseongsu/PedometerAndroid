@@ -66,10 +66,8 @@ public class PedometerStateFragment extends Fragment implements PedometerStateCo
     @Override
     public void setDailyStep(@NonNull DailyStep dailyStep) {
         mDate.setText(UiUtils.formatDate(dailyStep.getDate()));
-        mStepCount.setText(getString(R.string.steps_fmt,
-                NumberFormat.getInstance().format(dailyStep.getStepCount())));
-        mDistance.setText(getString(R.string.km_fmt,
-                NumberFormat.getInstance().format(dailyStep.getDistance())));
+        mStepCount.setText(getString(R.string.steps_fmt,dailyStep.getStepCount()));
+        mDistance.setText(getString(R.string.km_fmt,dailyStep.getDistanceKm()));
     }
 
     @Override
